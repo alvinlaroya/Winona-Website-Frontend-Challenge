@@ -19,7 +19,6 @@ export default defineEventHandler(async (event) => {
     console.log("pagess", pages)
 
     return {
-        pages,
-        count: pages.length
+        pages
     }
 })
