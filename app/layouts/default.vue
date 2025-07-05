@@ -13,11 +13,11 @@
     <main class="flex-1">
       <slot />
     </main>
-    <footer class="footer mt-5 sm:footer-horizontal items-center px-4 py-3 border-t border-base-300">
+    <footer class="footer flex justify-between mt-5 items-center px-4 py-3 border-t border-base-300">
       <aside class="grid-flow-col items-center">
         <p>Copyright © {{ new Date().getFullYear() }} - All right reserved</p>
       </aside>
-      <div class="grid-flow-col gap-4 md:place-self-center md:justify-self-end">
+      <div class="justify-self-end">
         <ThemeToggle dropdownPosition="dropdown-top" />
       </div>
     </footer>

@@ -1,29 +1,48 @@
-<script setup>
+<script lang="ts" setup>
+import type { PageDetailApiResponse } from '~/types/page'
+
 const route = useRoute()
-const id = route.params.id
+const id = route.params.id as string
 
-const { data, status, error } = await useFetch(`/api/pages/${id}`)
-const isLoading = computed(() => status.value === 'pending')
+const { data, error } = await useFetch<PageDetailApiResponse>(`/api/pages/${id}`, {
+    default: () => ({
+        pageDetail: {
+            id: '',
+            title: '',
+            reviewer: { name: '', credentials: '', affiliation: '' },
+            datePublished: '',
+            dateModified: '',
+            body: '',
+            seo: { title: '', description: '' }
+        }
+    })
+})
 
-watch(data, (newData) => {
+const datePublished = computed(() => $moment(data.value.pageDetail?.datePublished).format('MMMM D YYYY'))
+const dateModified = computed(() => $moment(data.value.pageDetail?.dateModified).format('MMMM D YYYY'))
+
+
+watch(data, (newData: PageDetailApiResponse | null) => {
     if (newData?.pageDetail?.seo) {
         useSeoMeta({
-            title: newData.pageDetail?.seo.title,
-            description: newData.pageDetail?.seo.description,
+            title: newData.pageDetail.seo.title,
+            description: newData.pageDetail.seo.description,
         })
     }
 }, { immediate: true })
 
+// Or navigate to a custom error page
+if (data.value.pageDetail.statusCode === 404) {
+    await navigateTo('/error/no-data')
+}
+
 const { $moment } = useNuxtApp()
 </script>
 
-
 <template>
-    <div class="w-1/2 mx-auto">
-        <div v-if="isLoading">Loading pages...</div>
-
+    <div class="w-full px-4 xl:w-1/2 mx-auto">
         <!-- Main Content -->
-        <div v-else class="container mx-auto max-w-4xl">
+        <div class="container mx-auto max-w-4xl">
 
             <div class="text-sm breadcrumbs mb-6">
                 <ul>
@@ -34,12 +53,10 @@ const { $moment } = useNuxtApp()
                 </ul>
             </div>
 
-
-
             <div class="card bg-base-100 shadow-xl border border-base-300">
                 <div class="card-body">
-                    <div class="mb-8">
-                        <h1 class="text-4xl font-bold text-base-content mb-6 leading-tight">
+                    <div class="mb-2">
+                        <h1 class="text-2xl lg:text-4xl font-bold text-base-content mb-6 leading-tight">
                             {{ data.pageDetail?.title }}
                         </h1>
 
@@ -52,8 +69,7 @@ const { $moment } = useNuxtApp()
                                     </path>
                                 </svg>
                                 <ClientOnly>
-                                    <span>Published: {{ $moment(data.pageDetail?.datePublished).format('MMMM D YYYY')
-                                        }}</span>
+                                    <span>Published: {{ datePublished }}</span>
                                 </ClientOnly>
                             </div>
                             <div class="flex items-center gap-1">
@@ -63,26 +79,26 @@ const { $moment } = useNuxtApp()
                                     </path>
                                 </svg>
                                 <ClientOnly>
-                                    <span>Modified: {{ $moment(data.pageDetail?.dateModified).format('MMMM D YYYY')
-                                        }}</span>
+                                    <span>Modified: {{ dateModified }}</span>
                                 </ClientOnly>
                             </div>
                         </div>
                     </div>
 
-                    <div class="bg-base-200 rounded-lg p-6 mb-8">
+                    <div class="bg-base-200 rounded-lg p-4 mb-8">
                         <div class="flex items-start gap-4">
                             <div class="avatar">
                                 <div class="w-16 rounded-full bg-primary">
                                     <div
                                         class="w-16 h-16 bg-primary rounded-full flex items-center justify-center text-primary-content text-xl font-bold">
-                                        {{data.pageDetail?.reviewer?.name.split(" ").map((n) => n[0]).join(".")}}
+                                        {{data.pageDetail?.reviewer?.name?.split(" ").map((n: string) =>
+                                            n[0]).join(".")}}
                                     </div>
                                 </div>
                             </div>
                             <div class="flex-1">
                                 <div class="flex items-center gap-2 mb-2">
-                                    <h3 class="text-xl font-semibold text-base-content">{{
+                                    <h3 class="text-base lg:text-xl font-semibold text-base-content">{{
                                         data.pageDetail?.reviewer?.name }}
                                     </h3>
                                     <div class="badge badge-sm badge-accent">Reviewer</div>

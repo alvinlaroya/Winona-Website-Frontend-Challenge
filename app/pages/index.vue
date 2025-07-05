@@ -1,7 +1,11 @@
 <script lang="ts" setup>
-const { data, status, error } = await useFetch('/api/pages')
+import type { PagesApiResponse } from '~/types/page'
 
-const isLoading = computed(() => status.value === 'pending')
+const { data } = await useFetch<PagesApiResponse>('/api/pages', {
+  default: () => ({
+    pages: []
+  })
+})
 
 useSeoMeta({
   title: 'Winona Website Frontend Challenge'
@@ -9,10 +13,9 @@ useSeoMeta({
 </script>
 
 <template>
-  <div class="w-1/2 mx-auto">
+  <div class="w-full px-4 xl:w-1/2 mx-auto">
     <h1 class="my-4">Pages</h1>
-    <div v-if="isLoading">Loading pages...</div>
-    <div v-else>
+    <div>
       <div v-for="page in data.pages" :key="page.id">
         <CardPageCard :id="page.id" :title="page.title" :datePublished="page.datePublished" />
       </div>
