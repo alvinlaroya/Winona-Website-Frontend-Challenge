@@ -53,7 +53,7 @@ const { $moment } = useNuxtApp()
                                 </svg>
                                 <ClientOnly>
                                     <span>Published: {{ $moment(data.pageDetail?.datePublished).format('MMMM D YYYY')
-                                    }}</span>
+                                        }}</span>
                                 </ClientOnly>
                             </div>
                             <div class="flex items-center gap-1">
@@ -64,7 +64,7 @@ const { $moment } = useNuxtApp()
                                 </svg>
                                 <ClientOnly>
                                     <span>Modified: {{ $moment(data.pageDetail?.dateModified).format('MMMM D YYYY')
-                                    }}</span>
+                                        }}</span>
                                 </ClientOnly>
                             </div>
                         </div>
@@ -104,7 +104,7 @@ const { $moment } = useNuxtApp()
                     <div class="prose prose-lg max-w-none px-2">
                         <div class="text-base-content leading-relaxed">
                             <h2 class="text-2xl font-bold text-base-content mt-2 mb-4">Executive Summary</h2>
-                            <div v-html="data.pageDetail?.body"></div>
+                            <div class="html-body" v-html="data.pageDetail?.body"></div>
                         </div>
                     </div>
                 </div>
@@ -113,3 +113,11 @@ const { $moment } = useNuxtApp()
         </div>
     </div>
 </template>
+
+<style>
+.html-body ul {
+    list-style-type: disc;
+    margin-left: 1.25rem;
+    padding-left: 0;
+}
+</style>
