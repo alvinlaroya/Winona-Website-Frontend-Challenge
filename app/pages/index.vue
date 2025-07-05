@@ -1,14 +1,21 @@
+<script lang="ts" setup>
+const { data, status, error } = await useFetch('/api/pages')
+
+const isLoading = computed(() => status.value === 'pending')
+
+useSeoMeta({
+  title: 'Winona Website Frontend Challenge'
+})
+</script>
+
 <template>
-  <div class="container mx-auto">
-    <p>So much space for content</p>
-    <p>This is a test store:</p>
-    <p>Current count:
-      {{ counterStore.count }}</p>
-    <button class="btn btn-primary" @click="counterStore.increment()">Increment</button>
+  <div class="w-1/2 mx-auto">
+    <h1 class="my-4">Pages</h1>
+    <div v-if="isLoading">Loading pages...</div>
+    <div v-else>
+      <div v-for="page in data.pages" :key="page.id">
+        <CardPageCard :id="page.id" :title="page.title" :datePublished="page.datePublished" />
+      </div>
+    </div>
   </div>
 </template>
-
-<script lang="ts" setup>
-const counterStore = useCounterStore();
-</script>
-<style lang="scss" scoped></style>
