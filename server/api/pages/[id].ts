@@ -1,4 +1,6 @@
-export default defineEventHandler(async (event) => {
+import type { H3Event } from 'h3'
+
+export default cachedEventHandler(async (event) => {
     const apiBaseUrl = process.env.NUXT_API_BASE_URL
     const apiAuthorization = process.env.NUXT_API_AUTHORIZATION
 
@@ -10,6 +12,7 @@ export default defineEventHandler(async (event) => {
     }
 
     const { id } = event.context.params!
+    //const id = getRouterParam(event, 'id')
 
     const response = await fetch(`${apiBaseUrl}/pages/${id}`, {
         headers: {
@@ -23,4 +26,9 @@ export default defineEventHandler(async (event) => {
     return {
         pageDetail
     }
-})
+},
+    {
+        maxAge: 60 * 60, // 1 hour
+        getKey: (event: H3Event) => event.path
+    }
+)

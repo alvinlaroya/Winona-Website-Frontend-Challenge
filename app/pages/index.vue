@@ -1,10 +1,18 @@
 <script lang="ts" setup>
 import type { PagesApiResponse } from '~/types/page'
 
-const { data } = await useFetch<PagesApiResponse>('/api/pages', {
+const { data, refresh } = await useFetch<PagesApiResponse>('/api/pages', {
   default: () => ({
     pages: []
-  })
+  }),
+  /* transform: (data) => {
+    return {
+      pages: data.pages.map(page => ({
+        ...page,
+        datePublished: $moment(page.datePublished).format('MMMM D YYYY')
+      }))
+    }
+  } */
 })
 
 useSeoMeta({

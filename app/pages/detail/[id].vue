@@ -22,14 +22,10 @@ const datePublished = computed(() => $moment(data.value.pageDetail?.datePublishe
 const dateModified = computed(() => $moment(data.value.pageDetail?.dateModified).format('MMMM D YYYY'))
 
 
-watch(data, (newData: PageDetailApiResponse | null) => {
-    if (newData?.pageDetail?.seo) {
-        useSeoMeta({
-            title: newData.pageDetail.seo.title,
-            description: newData.pageDetail.seo.description,
-        })
-    }
-}, { immediate: true })
+useSeoMeta({
+    title: data.value.pageDetail.seo.title,
+    description: data.value.pageDetail.seo.description,
+})
 
 // Or navigate to a custom error page
 if (data.value.pageDetail.statusCode === 404) {
